@@ -1,0 +1,20 @@
+server:
+  port: 8000
+
+dataId: api
+group: bifrost
+nacosClientParam:
+  clientconfig:
+    appname: api
+    username: nacos
+    password: nacos
+    namespaceid: 7d563b30-8300-434b-afae-f339312e9d06
+    timeoutms: 5000
+    notloadcacheatstart: true
+    logdir: /tmp/nacos/bifrost-api/log
+    cachedir: /tmp/nacos/bifrost-api/cache
+    loglevel: error
+  serverconfigs:
+    - ipaddr: 127.0.0.1
+      port: 8848
+      grpcport: 9848
