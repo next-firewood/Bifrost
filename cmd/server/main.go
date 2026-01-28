@@ -3,6 +3,7 @@ package main
 import (
 	"bifrost/internal/config"
 	"bifrost/internal/route"
+	"bifrost/svc"
 	"github.com/gin-gonic/gin"
 	"log"
 )
@@ -24,9 +25,13 @@ func main() {
 		}
 	}
 
+	svcX := svc.NewServiceContext(cfg)
+
+	go svcX.Hub.Run()
+
 	r := gin.New()
 
-	route.RegisterHTTP(r)
+	route.RegisterHTTP(r, svcX)
 
 	r.Run(":" + cfg.Server.Port)
 }

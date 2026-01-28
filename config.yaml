@@ -1,6 +1,3 @@
-server:
-  port: 8000
-
 dataId: api
 group: bifrost
 nacosClientParam:

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"bifrost/common/jwtx"
 	"fmt"
 	"github.com/nacos-group/nacos-sdk-go/v2/clients"
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
@@ -13,6 +14,7 @@ type Config struct {
 	Server struct {
 		Port string `json:"port" yaml:"port"` // HTTP 端口
 	} `json:"server" yaml:"server"`
+	Auth jwtx.Auth `json:"auth" yaml:"auth"`
 
 	vo.NacosClientParam `yaml:"nacosClientParam"`
 	DataId              string `yaml:"dataId"`

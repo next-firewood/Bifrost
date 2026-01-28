@@ -4,13 +4,14 @@ import (
 	"bifrost/internal/handler/http/public"
 	"bifrost/internal/handler/http/pusher"
 	"bifrost/internal/handler/http/stats"
+	"bifrost/svc"
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterHTTP(r *gin.Engine) {
+func RegisterHTTP(r *gin.Engine, svcCtx *svc.ServerContext) {
 	r.Use(gin.Recovery())
 	// WebSocket 升级接口（HTTP GET）
-	r.GET("/ws-conn", public.WebSocketConn)
+	r.GET("/ws-conn", public.NewWebsocketConnHandler(svcCtx).Handle)
 
 	// API 路由组
 	api := r.Group("/api")
