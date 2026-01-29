@@ -1,7 +1,25 @@
 package stats
 
-import "github.com/gin-gonic/gin"
+import (
+	"bifrost/common/response"
+	"bifrost/internal/logic/stats"
+	"bifrost/svc"
+	"github.com/gin-gonic/gin"
+)
 
-func Metrics(c *gin.Context) {
-	c.JSON(200, gin.H{"msg": "Metrics handler placeholder"})
+type MetricsHandler struct {
+	svcCtx *svc.ServerContext
+	logic  *stats.MetricsLogic
+}
+
+func NewMetricsHandler(svcCtx *svc.ServerContext) *MetricsHandler {
+	return &MetricsHandler{
+		svcCtx: svcCtx,
+		logic:  stats.NewMetricsLogic(svcCtx),
+	}
+}
+
+func (s *MetricsHandler) Handle(c *gin.Context) {
+	resp, err := s.logic.Logic()
+	response.Response(c, resp, err)
 }

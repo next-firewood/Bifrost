@@ -26,8 +26,8 @@ func RegisterHTTP(r *gin.Engine, svcCtx *svc.ServerContext) {
 		// 状态查询接口
 		status := api.Group("/status")
 		{
-			status.GET("/user/:user_id", stats.UserStatus) // 查询单个用户在线状态
-			status.GET("/metrics", stats.Metrics)          // 全局连接指标
+			status.GET("/user/:user_id", stats.UserStatus)                 // 查询单个用户在线状态
+			status.GET("/metrics", stats.NewMetricsHandler(svcCtx).Handle) // 全局连接指标
 		}
 	}
 }
