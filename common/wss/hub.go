@@ -3,11 +3,14 @@ package wss
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 )
 
 type Hub struct {
 	// Registered clients.
-	clients map[*Client]bool
+	clients    map[*Client]bool
+	clientMaps map[string]*Client
+	ck         string
 
 	// Inbound messages from the clients.
 	broadcast chan []byte
@@ -19,12 +22,14 @@ type Hub struct {
 	unregister chan *Client
 }
 
-func NewHub() *Hub {
+func NewHub(ck string) *Hub {
 	return &Hub{
 		broadcast:  make(chan []byte),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
 		clients:    make(map[*Client]bool),
+		clientMaps: make(map[string]*Client),
+		ck:         ck,
 	}
 }
 
@@ -45,6 +50,8 @@ func (h *Hub) Run() {
 		select {
 		case client := <-h.register:
 			h.clients[client] = true
+			h.clientMaps[fmt.Sprintf("%v", client.Ud[h.ck])] = client
+			fmt.Println(h.clientMaps)
 		case client := <-h.unregister:
 			if _, ok := h.clients[client]; ok {
 				delete(h.clients, client)
@@ -65,7 +72,6 @@ func (h *Hub) Run() {
 
 func send(clients map[*Client]bool, msg WssMessage) {
 	for client := range clients {
-
 		if msg.Recipient.Key != "" && client.Ud[msg.Recipient.Key] != msg.Recipient.Value {
 			continue
 		}
@@ -81,4 +87,8 @@ func send(clients map[*Client]bool, msg WssMessage) {
 
 func (h *Hub) Clients() map[*Client]bool {
 	return h.clients
+}
+
+func (h *Hub) ClientsMap(key string) *Client {
+	return h.clientMaps[key]
 }

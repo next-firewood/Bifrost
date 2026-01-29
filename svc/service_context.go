@@ -13,6 +13,6 @@ type ServerContext struct {
 func NewServiceContext(c *config.Config) *ServerContext {
 	return &ServerContext{
 		Config: c,
-		Hub:    wss.NewHub(),
+		Hub:    wss.NewHub(c.WsHubCk),
 	}
 }

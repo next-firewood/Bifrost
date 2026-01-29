@@ -13,12 +13,16 @@ const (
 	TokenExpired
 	TokenRefresh
 	NonPermission
+	GinBindParam
+
+	Business = 2000
 )
 
 var ErrMap = map[int]error{
 	TokenExpired:  fmt.Errorf("令牌过期"),
 	TokenRefresh:  fmt.Errorf("令牌刷新"),
 	NonPermission: fmt.Errorf("无权限"),
+	GinBindParam:  fmt.Errorf("参数错误"),
 }
 
 // 微信相关错误
@@ -70,6 +74,10 @@ func NewCodeError(code int) error {
 	return &CodeError{Code: code, Msg: ErrMap[code].Error()}
 }
 
+func NewGinBindParamError() error {
+	return &CodeError{Code: GinBindParam, Msg: ErrMap[GinBindParam].Error()}
+}
+
 func NewRpcError(code int) error {
 	return status.Error(codes.Code(code), ErrMap[code].Error())
 }
@@ -89,4 +97,8 @@ func TransCodeErr(err error) (code int, res error) {
 	}
 
 	return code, err
+}
+
+func BusinessErr(msg string) (err error) {
+	return &CodeError{Code: Business, Msg: msg}
 }

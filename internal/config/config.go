@@ -14,7 +14,8 @@ type Config struct {
 	Server struct {
 		Port string `json:"port" yaml:"port"` // HTTP 端口
 	} `json:"server" yaml:"server"`
-	Auth jwtx.Auth `json:"auth" yaml:"auth"`
+	Auth    jwtx.Auth `json:"auth" yaml:"auth"`
+	WsHubCk string    `json:"wsHubCk" yaml:"wsHubCk"`
 
 	vo.NacosClientParam `yaml:"nacosClientParam"`
 	DataId              string `yaml:"dataId"`
