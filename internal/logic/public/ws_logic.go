@@ -17,6 +17,6 @@ func NewWebsocketConnLogic(svcCtx *svc.ServerContext) *WebsocketConnLogic {
 	}
 }
 
-func (l WebsocketConnLogic) Logic(req model.WebsocketConnReq, w http.ResponseWriter, r *http.Request) (err error) {
-	return wss.ServeWs(req.UserData, l.svcCtx.Hub, w, r)
+func (l WebsocketConnLogic) Logic(req model.WebsocketConnReq, w http.ResponseWriter, r *http.Request, connErr error) (err error) {
+	return wss.ServeWs(req.UserData, l.svcCtx.Hub, w, r, connErr)
 }

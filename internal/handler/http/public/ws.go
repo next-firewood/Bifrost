@@ -27,6 +27,6 @@ func (s *WebSocketConnHandler) Handle(c *gin.Context) {
 		return
 	}
 
-	err = s.logic.Logic(model.WebsocketConnReq{UserData: cla.Ud}, c.Writer, c.Request)
+	err = s.logic.Logic(model.WebsocketConnReq{UserData: cla.Ud}, c.Writer, c.Request, err)
 	response.Response(c, nil, err)
 }

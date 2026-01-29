@@ -2,7 +2,6 @@ package jwtx
 
 import (
 	"bifrost/common/errorx"
-	"errors"
 	"github.com/golang-jwt/jwt/v5"
 	"time"
 )
@@ -16,9 +15,8 @@ type Auth struct {
 type UserData map[string]interface{}
 
 type CustomClaims struct {
-	Ud UserData
-
-	BuffTime *jwt.NumericDate
+	Ud       UserData         `json:"ud"`
+	BuffTime *jwt.NumericDate `json:"buff_time,omitempty"`
 	jwt.RegisteredClaims
 }
 
@@ -43,34 +41,41 @@ func (a Auth) GenToken(c *CustomClaims) (string, error) {
 
 	return token.SignedString([]byte(a.AccessSecret))
 }
-func (a Auth) ValidateToken(tokenStr string) (cla *CustomClaims, err error) {
-	token, err := jwt.ParseWithClaims(tokenStr, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(a.AccessSecret), nil
-	})
-	if err != nil && !errors.Is(err, jwt.ErrTokenExpired) {
-		return nil, errorx.NewCodeError(errorx.TokenExpired)
-	}
+func (a Auth) ValidateToken(tokenStr string) (*CustomClaims, error) {
+	cla := &CustomClaims{}
 
-	if errors.Is(err, jwt.ErrSignatureInvalid) {
-		return nil, errorx.NewCodeError(errorx.TokenExpired)
-	}
+	parser := jwt.NewParser(
+		jwt.WithoutClaimsValidation(),
+	)
 
-	c, ok := token.Claims.(*CustomClaims)
-	if !ok {
+	token, err := parser.ParseWithClaims(
+		tokenStr,
+		cla,
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(a.AccessSecret), nil
+		},
+	)
+	if err != nil {
 		return nil, errorx.NewCodeError(errorx.TokenExpired)
-	}
-
-	if errors.Is(err, jwt.ErrTokenExpired) {
-		if c.BuffTime.After(time.Now()) {
-			return c, errorx.NewCodeError(errorx.TokenRefresh)
-		} else {
-			return nil, errorx.NewCodeError(errorx.TokenExpired)
-		}
 	}
 
 	if !token.Valid {
 		return nil, errorx.NewCodeError(errorx.TokenExpired)
 	}
 
-	return c, nil
+	now := time.Now()
+
+	if cla.ExpiresAt == nil {
+		return nil, errorx.NewCodeError(errorx.TokenExpired)
+	}
+
+	if now.Before(cla.ExpiresAt.Time) {
+		return cla, nil
+	}
+
+	if cla.BuffTime != nil && now.Before(cla.BuffTime.Time) {
+		return cla, errorx.NewCodeError(errorx.TokenRefresh)
+	}
+
+	return nil, errorx.NewCodeError(errorx.TokenExpired)
 }
