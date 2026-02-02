@@ -1,7 +1,6 @@
 package stats
 
 import (
-	"bifrost/common/errorx"
 	"bifrost/internal/model"
 	"bifrost/svc"
 )
@@ -16,14 +15,19 @@ func NewUserStatusLogic(svcCtx *svc.ServerContext) *UserStatusLogic {
 	}
 }
 
-func (l *UserStatusLogic) Logic(req model.UserStatusReq) (resp model.MetricsItem, err error) {
-	client := l.svcCtx.Hub.ClientsMap(req.Ckv)
-
-	if client == nil {
-		return resp, errorx.BusinessErr("当前连接不存在")
+func (l *UserStatusLogic) Logic(req model.UserStatusReq) (resp model.MetricsResp, err error) {
+	client, err := l.svcCtx.Hub.ClientsMap(req.K, req.V)
+	if err != nil {
+		return resp, err
 	}
 
-	resp.Ud = client.Ud
+	for _, c := range client {
+		resp.List = append(resp.List, model.MetricsItem{
+			Ud: c.Ud,
+		})
+	}
+
+	resp.Total = int64(len(client))
 
 	return resp, err
 }

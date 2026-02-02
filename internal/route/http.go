@@ -19,8 +19,9 @@ func RegisterHTTP(r *gin.Engine, svcCtx *svc.ServerContext) {
 		// 推送接口
 		push := api.Group("/push")
 		{
-			push.POST("/push", pusher.PushUser)           // 推送单个用户
-			push.POST("/broadcast", pusher.PushBroadcast) // 广播
+			push.POST("/push", pusher.PushUser)                                             // 推送单个用户
+			push.POST("/filter/broadcast", pusher.NewFilterBroadcastHandler(svcCtx).Handle) // 条件广播
+			//push.POST("/broadcast", )        // 广播
 		}
 
 		// 状态查询接口

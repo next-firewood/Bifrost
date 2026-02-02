@@ -1,6 +1,8 @@
 package model
 
-import "bifrost/common/jwtx"
+import (
+	"bifrost/common/jwtx"
+)
 
 type WebsocketConnReq struct {
 	UserData map[string]interface{} `json:"userData"`
@@ -19,5 +21,15 @@ type MetricsItem struct {
 }
 
 type UserStatusReq struct {
-	Ckv string `form:"ckv"`
+	K string `form:"k"`
+	V string `form:"v"`
+}
+
+type FilterHeader struct {
+	FilterKey   string `header:"Filter-Key"`
+	FilterValue string `header:"Filter-Value"`
+}
+
+type PushBroadcastReq struct {
+	Msg string `json:"msg"`
 }
