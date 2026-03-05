@@ -6,35 +6,27 @@ import (
 	"bifrost/internal/logic/pusher"
 	"bifrost/internal/model"
 	"bifrost/svc"
-	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
-type FilterBroadcastHandler struct {
+type BroadcastHandler struct {
 	svcCtx *svc.ServerContext
-	logic  *pusher.FilterBroadcastLogic
+	logic  *pusher.BroadcastLogic
 }
 
-func NewFilterBroadcastHandler(svcCtx *svc.ServerContext) *FilterBroadcastHandler {
-	return &FilterBroadcastHandler{
+func NewBroadcastHandler(svcCtx *svc.ServerContext) *BroadcastHandler {
+	return &BroadcastHandler{
 		svcCtx: svcCtx,
-		logic:  pusher.NewFilterBroadcastLogic(svcCtx),
+		logic:  pusher.NewBroadcastLogic(svcCtx),
 	}
 }
 
-func (s *FilterBroadcastHandler) Handle(c *gin.Context) {
+func (s *BroadcastHandler) Handle(c *gin.Context) {
 	var req model.PushBroadcastReq
 
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		response.Response(c, nil, errorx.NewGinBindParamError())
-		return
-	}
-
-	s.logic.Fn, err = s.svcCtx.Hub.FilterSendFn(c)
-	if err != nil {
-		fmt.Println(err)
-		response.Response(c, nil, err)
 		return
 	}
 

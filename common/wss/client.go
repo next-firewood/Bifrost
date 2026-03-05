@@ -20,7 +20,7 @@ const (
 	// Send pings to peer with this period. Must be less than pongWait.
 	pingPeriod = (pongWait * period) / 10
 
-	// send buffer size
+	// sends buffer size
 	bufSize = 128
 
 	bufferSize = 512

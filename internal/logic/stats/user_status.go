@@ -16,7 +16,7 @@ func NewUserStatusLogic(svcCtx *svc.ServerContext) *UserStatusLogic {
 }
 
 func (l *UserStatusLogic) Logic(req model.UserStatusReq) (resp model.MetricsResp, err error) {
-	client, err := l.svcCtx.Hub.ClientsMap(req.K, req.V)
+	client, err := l.svcCtx.Hub.ClientsGetWithField(req.K, req.V)
 	if err != nil {
 		return resp, err
 	}

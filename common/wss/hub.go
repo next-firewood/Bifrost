@@ -95,7 +95,7 @@ func (h *Hub) Clients() map[*Client]bool {
 	return h.clients
 }
 
-func (h *Hub) ClientsMap(fieldName string, value string) (clients []*Client, err error) {
+func (h *Hub) ClientsGetWithField(fieldName string, value string) (clients []*Client, err error) {
 	fieldIndex, exists := h.reverseIndex[fieldName]
 	if !exists {
 		return nil, errorx.BusinessErr(fmt.Sprintf("字段 %s 不存在于反向索引中", fieldName))
@@ -163,7 +163,7 @@ func (h *Hub) FilterSendFn(c *gin.Context) (fn func(message string) error, err e
 		return nil, errorx.NewGinBindParamError()
 	}
 
-	clients, err := h.ClientsMap(f.FilterKey, f.FilterValue)
+	clients, err := h.ClientsGetWithField(f.FilterKey, f.FilterValue)
 
 	fn = func(message string) (err error) {
 		for _, client := range clients {
